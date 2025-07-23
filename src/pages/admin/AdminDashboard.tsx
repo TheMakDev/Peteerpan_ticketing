@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Shield, Users, Wrench, Ticket, BarChart3, LogOut, UserPlus, Settings } from "lucide-react";
+import { Shield, Users, Wrench, Ticket, BarChart3, UserPlus, Settings } from "lucide-react";
+import Layout from "@/components/layout/Layout";
 
 const AdminDashboard = () => {
   const [user, setUser] = useState<any>(null);
@@ -34,41 +35,13 @@ const AdminDashboard = () => {
     setUser(userData);
   }, [navigate]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("currentUser");
-    toast({
-      title: "Logged out successfully",
-      description: "See you next time!"
-    });
-    navigate("/");
-  };
-
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-secondary/5">
-      {/* Header */}
-      <header className="border-b bg-background/80 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Shield className="h-8 w-8 text-primary" />
-              <div>
-                <h1 className="text-xl font-bold">Admin Dashboard</h1>
-                <p className="text-sm text-muted-foreground">Welcome, {user.name}</p>
-              </div>
-            </div>
-            <Button variant="outline" onClick={handleLogout}>
-              <LogOut className="h-4 w-4 mr-2" />
-              Logout
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-4 py-8">
+    <Layout user={user}>
+      <div className="container mx-auto px-4 py-6 space-y-6">
         {/* Stats Overview */}
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-6 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-6">
           <Card>
             <CardHeader className="pb-2">
               <CardTitle className="text-sm font-medium flex items-center gap-2">
@@ -136,43 +109,43 @@ const AdminDashboard = () => {
             <CardDescription>Common administrative tasks</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
+            <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
               <Button 
-                className="justify-start h-auto p-4 flex-col"
+                className="justify-center h-auto p-4 flex-col text-center"
                 onClick={() => navigate("/admin/users")}
               >
                 <UserPlus className="h-6 w-6 mb-2" />
-                <span>Add User</span>
+                <span className="text-sm">Add User</span>
               </Button>
               <Button 
                 variant="outline" 
-                className="justify-start h-auto p-4 flex-col"
+                className="justify-center h-auto p-4 flex-col text-center"
                 onClick={() => navigate("/admin/engineers")}
               >
                 <Wrench className="h-6 w-6 mb-2" />
-                <span>Manage Engineers</span>
+                <span className="text-sm">Manage Engineers</span>
               </Button>
               <Button 
                 variant="outline" 
-                className="justify-start h-auto p-4 flex-col"
+                className="justify-center h-auto p-4 flex-col text-center"
                 onClick={() => navigate("/admin/tickets")}
               >
                 <Ticket className="h-6 w-6 mb-2" />
-                <span>Assign Tickets</span>
+                <span className="text-sm">Assign Tickets</span>
               </Button>
               <Button 
                 variant="outline" 
-                className="justify-start h-auto p-4 flex-col"
+                className="justify-center h-auto p-4 flex-col text-center"
                 onClick={() => navigate("/admin/reports")}
               >
                 <BarChart3 className="h-6 w-6 mb-2" />
-                <span>View Reports</span>
+                <span className="text-sm">View Reports</span>
               </Button>
             </div>
           </CardContent>
         </Card>
 
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
+        <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
           {/* Recent Activity */}
           <Card>
             <CardHeader>
@@ -236,8 +209,8 @@ const AdminDashboard = () => {
             </CardContent>
           </Card>
         </div>
-      </main>
-    </div>
+      </div>
+    </Layout>
   );
 };
 

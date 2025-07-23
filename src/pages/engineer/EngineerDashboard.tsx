@@ -4,7 +4,8 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { Wrench, Clock, CheckCircle, AlertCircle, LogOut, User } from "lucide-react";
+import { Wrench, Ticket, Clock, CheckCircle, AlertCircle, User } from "lucide-react";
+import Layout from "@/components/layout/Layout";
 
 const EngineerDashboard = () => {
   const [user, setUser] = useState<any>(null);
@@ -26,91 +27,71 @@ const EngineerDashboard = () => {
     }
     
     setUser(userData);
-    
-    // Load assigned tickets (simulate assigned tickets)
-    const tickets = [
-      {
-        id: 1,
-        title: "Email not working",
-        description: "Cannot send emails from Outlook",
-        category: "Email",
-        urgency: "High",
-        status: "assigned",
-        createdAt: new Date().toISOString(),
-        userName: "John Doe",
-        userEmail: "john@example.com"
-      },
-      {
-        id: 2,
-        title: "Software installation request",
-        description: "Need Adobe Photoshop installed",
-        category: "Software",
-        urgency: "Medium",
-        status: "in-progress",
-        createdAt: new Date(Date.now() - 86400000).toISOString(),
-        userName: "Jane Smith",
-        userEmail: "jane@example.com"
-      }
-    ];
-    setAssignedTickets(tickets);
+    loadAssignedTickets(userData.id);
   }, [navigate]);
 
-  const handleLogout = () => {
-    localStorage.removeItem("currentUser");
-    toast({
-      title: "Logged out successfully",
-      description: "See you next time!"
+  const loadAssignedTickets = (engineerId: string) => {
+    // Load all tickets assigned to this engineer
+    const allUsers = JSON.parse(localStorage.getItem("allUsers") || "[]");
+    const assignedTickets: any[] = [];
+    
+    allUsers.forEach((user: any) => {
+      const userTickets = JSON.parse(localStorage.getItem(`tickets_${user.id}`) || "[]");
+      const engineerTickets = userTickets.filter((ticket: any) => ticket.assignedTo === engineerId);
+      assignedTickets.push(...engineerTickets.map((ticket: any) => ({
+        ...ticket,
+        userName: user.name,
+        userEmail: user.email
+      })));
     });
-    navigate("/");
+
+    setAssignedTickets(assignedTickets);
   };
 
-  const updateTicketStatus = (ticketId: number, newStatus: string) => {
-    setAssignedTickets(prev => 
-      prev.map(ticket => 
-        ticket.id === ticketId 
-          ? { ...ticket, status: newStatus }
-          : ticket
-      )
-    );
+  const updateTicketStatus = (ticketId: string, newStatus: string) => {
+    // Find the ticket and update it
+    const ticket = assignedTickets.find(t => t.id === ticketId);
+    if (!ticket) return;
+
+    // Update in the user's tickets
+    const allUsers = JSON.parse(localStorage.getItem("allUsers") || "[]");
+    const ticketOwner = allUsers.find((u: any) => u.email === ticket.userEmail);
     
-    toast({
-      title: "Ticket Updated",
-      description: `Ticket status changed to ${newStatus}`
-    });
+    if (ticketOwner) {
+      const userTickets = JSON.parse(localStorage.getItem(`tickets_${ticketOwner.id}`) || "[]");
+      const updatedUserTickets = userTickets.map((t: any) => {
+        if (t.id === ticketId) {
+          return { ...t, status: newStatus, updatedAt: new Date().toISOString() };
+        }
+        return t;
+      });
+      localStorage.setItem(`tickets_${ticketOwner.id}`, JSON.stringify(updatedUserTickets));
+      
+      // Reload tickets
+      loadAssignedTickets(user.id);
+      
+      toast({
+        title: "Ticket updated",
+        description: `Ticket status changed to ${newStatus}`
+      });
+    }
   };
 
   const getStatusBadge = (status: string) => {
     const statusConfig = {
-      pending: { variant: "secondary" as const, icon: Clock },
       assigned: { variant: "default" as const, icon: AlertCircle },
-      "in-progress": { variant: "default" as const, icon: AlertCircle },
+      "in-progress": { variant: "default" as const, icon: Clock },
       resolved: { variant: "outline" as const, icon: CheckCircle },
       closed: { variant: "outline" as const, icon: CheckCircle }
     };
     
-    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
+    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.assigned;
     const Icon = config.icon;
     
     return (
       <Badge variant={config.variant} className="flex items-center gap-1">
         <Icon className="h-3 w-3" />
-        {status.charAt(0).toUpperCase() + status.slice(1).replace("-", " ")}
-      </Badge>
-    );
-  };
-
-  const getUrgencyBadge = (urgency: string) => {
-    const urgencyConfig = {
-      low: { variant: "outline" as const, className: "border-green-500 text-green-700" },
-      medium: { variant: "outline" as const, className: "border-yellow-500 text-yellow-700" },
-      high: { variant: "outline" as const, className: "border-red-500 text-red-700" }
-    };
-    
-    const config = urgencyConfig[urgency.toLowerCase() as keyof typeof urgencyConfig];
-    
-    return (
-      <Badge variant={config.variant} className={config.className}>
-        {urgency}
+        {status.charAt(0).toUpperCase() + status.slice(1).replace('-', ' ')}
       </Badge>
     );
   };
@@ -125,56 +106,37 @@ const EngineerDashboard = () => {
   };
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-secondary/5">
-      {/* Header */}
-      <header className="border-b bg-background/80 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-2">
-              <Wrench className="h-8 w-8 text-primary" />
-              <div>
-                <h1 className="text-xl font-bold">Engineer Dashboard</h1>
-                <p className="text-sm text-muted-foreground">Welcome, {user.name}</p>
-              </div>
-            </div>
-            <Button variant="outline" onClick={handleLogout}>
-              <LogOut className="h-4 w-4 mr-2" />
-              Logout
-            </Button>
-          </div>
-        </div>
-      </header>
-
-      <main className="container mx-auto px-4 py-8">
+    <Layout user={user}>
+      <div className="container mx-auto px-4 py-6 space-y-6">
         {/* Stats Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Assigned Tickets</CardTitle>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base font-medium">Total Assigned</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold">{ticketStats.total}</div>
             </CardContent>
           </Card>
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">New Assignments</CardTitle>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base font-medium">New Assignments</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-yellow-600">{ticketStats.assigned}</div>
+              <div className="text-2xl font-bold text-blue-600">{ticketStats.assigned}</div>
             </CardContent>
           </Card>
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">In Progress</CardTitle>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base font-medium">In Progress</CardTitle>
             </CardHeader>
             <CardContent>
-              <div className="text-2xl font-bold text-blue-600">{ticketStats.inProgress}</div>
+              <div className="text-2xl font-bold text-yellow-600">{ticketStats.inProgress}</div>
             </CardContent>
           </Card>
           <Card>
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-medium">Resolved</CardTitle>
+            <CardHeader className="pb-3">
+              <CardTitle className="text-base font-medium">Resolved</CardTitle>
             </CardHeader>
             <CardContent>
               <div className="text-2xl font-bold text-green-600">{ticketStats.resolved}</div>
@@ -185,78 +147,69 @@ const EngineerDashboard = () => {
         {/* Assigned Tickets */}
         <Card>
           <CardHeader>
-            <CardTitle>Assigned Tickets</CardTitle>
-            <CardDescription>Tickets requiring your attention</CardDescription>
+            <CardTitle>My Assigned Tickets</CardTitle>
+            <CardDescription>Tickets assigned to you for resolution</CardDescription>
           </CardHeader>
           <CardContent>
             {assignedTickets.length === 0 ? (
-              <div className="text-center py-8">
-                <Wrench className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No tickets assigned</h3>
-                <p className="text-muted-foreground">You're all caught up! New tickets will appear here when assigned.</p>
+              <div className="text-center py-12">
+                <Ticket className="h-16 w-16 text-muted-foreground mx-auto mb-4" />
+                <h3 className="text-lg font-semibold mb-2">No assigned tickets</h3>
+                <p className="text-muted-foreground">You don't have any tickets assigned yet</p>
               </div>
             ) : (
-              <div className="space-y-6">
+              <div className="space-y-4">
                 {assignedTickets.map((ticket) => (
-                  <Card key={ticket.id} className="border-l-4 border-l-primary">
-                    <CardHeader className="pb-3">
-                      <div className="flex items-start justify-between">
-                        <div className="flex-1">
-                          <CardTitle className="text-lg">{ticket.title}</CardTitle>
-                          <div className="flex items-center gap-2 mt-2">
-                            <Badge variant="outline">{ticket.category}</Badge>
-                            {getUrgencyBadge(ticket.urgency)}
-                            {getStatusBadge(ticket.status)}
-                          </div>
+                  <div key={ticket.id} className="border rounded-lg p-4 space-y-3">
+                    <div className="flex flex-col sm:flex-row sm:items-start justify-between gap-4">
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-lg">{ticket.title}</h3>
+                        <div className="flex flex-wrap items-center gap-2 mt-1">
+                          <Badge variant="secondary">{ticket.category}</Badge>
+                          <Badge variant={ticket.urgency === 'high' ? 'destructive' : ticket.urgency === 'medium' ? 'default' : 'outline'}>
+                            {ticket.urgency} Priority
+                          </Badge>
+                          {getStatusBadge(ticket.status)}
                         </div>
-                      </div>
-                    </CardHeader>
-                    <CardContent>
-                      <p className="text-muted-foreground mb-4">{ticket.description}</p>
-                      
-                      <div className="flex items-center gap-4 mb-4 text-sm text-muted-foreground">
-                        <div className="flex items-center gap-1">
+                        <div className="flex items-center gap-2 mt-2 text-sm text-muted-foreground">
                           <User className="h-4 w-4" />
-                          {ticket.userName} ({ticket.userEmail})
+                          <span>{ticket.userName} ({ticket.userEmail})</span>
                         </div>
-                        <div>
-                          Created: {new Date(ticket.createdAt).toLocaleDateString()}
-                        </div>
+                        <p className="text-sm text-muted-foreground mt-1">
+                          Created {new Date(ticket.createdAt).toLocaleDateString()}
+                        </p>
                       </div>
-                      
-                      <div className="flex gap-2">
+                      <div className="flex flex-col sm:flex-row gap-2">
                         {ticket.status === "assigned" && (
-                          <Button 
+                          <Button
                             size="sm"
                             onClick={() => updateTicketStatus(ticket.id, "in-progress")}
                           >
-                            Start Working
+                            Start Work
                           </Button>
                         )}
                         {ticket.status === "in-progress" && (
-                          <Button 
+                          <Button
                             size="sm"
+                            variant="outline"
                             onClick={() => updateTicketStatus(ticket.id, "resolved")}
                           >
                             Mark Resolved
                           </Button>
                         )}
-                        <Button variant="outline" size="sm">
-                          Add Comment
-                        </Button>
-                        <Button variant="outline" size="sm">
-                          View Details
-                        </Button>
                       </div>
-                    </CardContent>
-                  </Card>
+                    </div>
+                    <div className="pt-2 border-t">
+                      <p className="text-sm">{ticket.description}</p>
+                    </div>
+                  </div>
                 ))}
               </div>
             )}
           </CardContent>
         </Card>
-      </main>
-    </div>
+      </div>
+    </Layout>
   );
 };
 
