@@ -51,9 +51,14 @@ const Index = () => {
                 <li>• Chat with engineers</li>
                 <li>• View ticket history</li>
               </ul>
-              <Link to="/auth/login?role=user" className="block">
-                <Button className="w-full">User Login</Button>
-              </Link>
+              <div className="space-y-2">
+                <Link to="/auth/login?role=user" className="block">
+                  <Button className="w-full">User Login</Button>
+                </Link>
+                <Link to="/auth/signup/user" className="block">
+                  <Button variant="outline" className="w-full">User Signup</Button>
+                </Link>
+              </div>
             </CardContent>
           </Card>
 
@@ -75,9 +80,14 @@ const Index = () => {
                 <li>• Communicate with users</li>
                 <li>• Track performance</li>
               </ul>
-              <Link to="/auth/login?role=engineer" className="block">
-                <Button variant="secondary" className="w-full">Engineer Login</Button>
-              </Link>
+              <div className="space-y-2">
+                <Link to="/auth/engineer" className="block">
+                  <Button variant="secondary" className="w-full">Engineer Login</Button>
+                </Link>
+                <Link to="/auth/signup/engineer" className="block">
+                  <Button variant="outline" className="w-full">Engineer Signup</Button>
+                </Link>
+              </div>
             </CardContent>
           </Card>
 
@@ -99,9 +109,14 @@ const Index = () => {
                 <li>• View analytics</li>
                 <li>• System administration</li>
               </ul>
-              <Link to="/auth/login?role=admin" className="block">
-                <Button variant="outline" className="w-full">Admin Login</Button>
-              </Link>
+              <div className="space-y-2">
+                <Link to="/auth/login?role=admin" className="block">
+                  <Button variant="outline" className="w-full">Admin Login</Button>
+                </Link>
+                <Link to="/auth/signup/admin" className="block">
+                  <Button variant="outline" className="w-full">Admin Signup</Button>
+                </Link>
+              </div>
             </CardContent>
           </Card>
         </div>

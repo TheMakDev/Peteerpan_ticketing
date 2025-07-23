@@ -7,11 +7,17 @@ import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import LoginPage from "./pages/auth/LoginPage";
 import EngineerLoginPage from "./pages/auth/EngineerLoginPage";
+import UserSignupPage from "./pages/auth/UserSignupPage";
+import EngineerSignupPage from "./pages/auth/EngineerSignupPage";
+import AdminSignupPage from "./pages/auth/AdminSignupPage";
 import UserDashboard from "./pages/user/UserDashboard";
 import UserTickets from "./pages/user/UserTickets";
 import CreateTicketPage from "./pages/user/CreateTicketPage";
 import EngineerDashboard from "./pages/engineer/EngineerDashboard";
 import AdminDashboard from "./pages/admin/AdminDashboard";
+import ManageUsers from "./pages/admin/ManageUsers";
+import ManageTickets from "./pages/admin/ManageTickets";
+import ViewReports from "./pages/admin/ViewReports";
 
 const queryClient = new QueryClient();
 
@@ -27,6 +33,9 @@ const App = () => (
           {/* Auth Routes */}
           <Route path="/auth/login" element={<LoginPage />} />
           <Route path="/auth/engineer" element={<EngineerLoginPage />} />
+          <Route path="/auth/signup/user" element={<UserSignupPage />} />
+          <Route path="/auth/signup/engineer" element={<EngineerSignupPage />} />
+          <Route path="/auth/signup/admin" element={<AdminSignupPage />} />
           
           {/* User Routes */}
           <Route path="/user/dashboard" element={<UserDashboard />} />
@@ -38,6 +47,10 @@ const App = () => (
           
           {/* Admin Routes */}
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
+          <Route path="/admin/users" element={<ManageUsers />} />
+          <Route path="/admin/engineers" element={<ManageUsers />} />
+          <Route path="/admin/tickets" element={<ManageTickets />} />
+          <Route path="/admin/reports" element={<ViewReports />} />
           
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
