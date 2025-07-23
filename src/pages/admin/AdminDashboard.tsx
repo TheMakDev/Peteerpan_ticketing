@@ -137,19 +137,34 @@ const AdminDashboard = () => {
           </CardHeader>
           <CardContent>
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
-              <Button className="justify-start h-auto p-4 flex-col">
+              <Button 
+                className="justify-start h-auto p-4 flex-col"
+                onClick={() => navigate("/admin/users")}
+              >
                 <UserPlus className="h-6 w-6 mb-2" />
                 <span>Add User</span>
               </Button>
-              <Button variant="outline" className="justify-start h-auto p-4 flex-col">
+              <Button 
+                variant="outline" 
+                className="justify-start h-auto p-4 flex-col"
+                onClick={() => navigate("/admin/engineers")}
+              >
                 <Wrench className="h-6 w-6 mb-2" />
                 <span>Manage Engineers</span>
               </Button>
-              <Button variant="outline" className="justify-start h-auto p-4 flex-col">
+              <Button 
+                variant="outline" 
+                className="justify-start h-auto p-4 flex-col"
+                onClick={() => navigate("/admin/tickets")}
+              >
                 <Ticket className="h-6 w-6 mb-2" />
                 <span>Assign Tickets</span>
               </Button>
-              <Button variant="outline" className="justify-start h-auto p-4 flex-col">
+              <Button 
+                variant="outline" 
+                className="justify-start h-auto p-4 flex-col"
+                onClick={() => navigate("/admin/reports")}
+              >
                 <BarChart3 className="h-6 w-6 mb-2" />
                 <span>View Reports</span>
               </Button>

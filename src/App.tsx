@@ -6,7 +6,10 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import Index from "./pages/Index";
 import NotFound from "./pages/NotFound";
 import LoginPage from "./pages/auth/LoginPage";
+import EngineerLoginPage from "./pages/auth/EngineerLoginPage";
 import UserDashboard from "./pages/user/UserDashboard";
+import UserTickets from "./pages/user/UserTickets";
+import CreateTicketPage from "./pages/user/CreateTicketPage";
 import EngineerDashboard from "./pages/engineer/EngineerDashboard";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 
@@ -23,9 +26,12 @@ const App = () => (
           
           {/* Auth Routes */}
           <Route path="/auth/login" element={<LoginPage />} />
+          <Route path="/auth/engineer" element={<EngineerLoginPage />} />
           
           {/* User Routes */}
           <Route path="/user/dashboard" element={<UserDashboard />} />
+          <Route path="/user/tickets" element={<UserTickets />} />
+          <Route path="/user/create-ticket" element={<CreateTicketPage />} />
           
           {/* Engineer Routes */}
           <Route path="/engineer/dashboard" element={<EngineerDashboard />} />
