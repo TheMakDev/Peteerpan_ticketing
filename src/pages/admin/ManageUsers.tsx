@@ -8,7 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Plus, Users, Edit, Trash2, Search } from "lucide-react";
+import { ArrowLeft, Plus, Users, Edit, Trash2, Search, Home } from "lucide-react";
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 
 const ManageUsers = () => {
@@ -124,8 +124,8 @@ const ManageUsers = () => {
           <div className="flex items-center justify-between">
             <div className="flex items-center space-x-4">
               <Button variant="ghost" onClick={() => navigate("/admin/dashboard")}>
-                <ArrowLeft className="h-4 w-4 mr-2" />
-                Back to Dashboard
+                <Home className="h-4 w-4 mr-2" />
+                Dashboard
               </Button>
               <div className="flex items-center space-x-2">
                 <Users className="h-6 w-6 text-primary" />

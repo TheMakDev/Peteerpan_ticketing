@@ -7,7 +7,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Send } from "lucide-react";
+import { ArrowLeft, Send, Home } from "lucide-react";
 
 const CreateTicketPage = () => {
   const [user, setUser] = useState<any>(null);
@@ -93,8 +93,8 @@ const CreateTicketPage = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center space-x-4">
             <Button variant="ghost" onClick={() => navigate("/user/dashboard")}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Dashboard
+              <Home className="h-4 w-4 mr-2" />
+              Dashboard
             </Button>
             <div>
               <h1 className="text-xl font-bold">Create New Ticket</h1>

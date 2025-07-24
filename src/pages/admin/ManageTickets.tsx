@@ -6,7 +6,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { ArrowLeft, Ticket, UserCheck, Clock, CheckCircle, AlertCircle } from "lucide-react";
+import { ArrowLeft, Ticket, UserCheck, Clock, CheckCircle, AlertCircle, Home } from "lucide-react";
 
 const ManageTickets = () => {
   const [user, setUser] = useState<any>(null);
@@ -136,8 +136,8 @@ const ManageTickets = () => {
         <div className="container mx-auto px-4 py-4">
           <div className="flex items-center space-x-4">
             <Button variant="ghost" onClick={() => navigate("/admin/dashboard")}>
-              <ArrowLeft className="h-4 w-4 mr-2" />
-              Back to Dashboard
+              <Home className="h-4 w-4 mr-2" />
+              Dashboard
             </Button>
             <div className="flex items-center space-x-2">
               <Ticket className="h-6 w-6 text-primary" />

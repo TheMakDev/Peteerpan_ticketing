@@ -1,5 +1,6 @@
 import { ReactNode } from "react";
-import Navbar from "./Navbar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
+import { AppSidebar } from "./AppSidebar";
 
 interface LayoutProps {
   children: ReactNode;
@@ -13,12 +14,20 @@ interface LayoutProps {
 
 const Layout = ({ children, user }: LayoutProps) => {
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-secondary/5">
-      <Navbar user={user} />
-      <main className="flex-1">
-        {children}
-      </main>
-    </div>
+    <SidebarProvider>
+      <div className="min-h-screen w-full bg-gradient-to-br from-primary/10 via-background to-secondary/5 flex">
+        <AppSidebar user={user} />
+        <div className="flex-1 flex flex-col">
+          <header className="h-12 flex items-center border-b bg-background/95 backdrop-blur">
+            <SidebarTrigger className="ml-2" />
+            <div className="flex-1" />
+          </header>
+          <main className="flex-1 overflow-auto">
+            {children}
+          </main>
+        </div>
+      </div>
+    </SidebarProvider>
   );
 };
 
