@@ -139,7 +139,7 @@ const EngineerLoginPage = () => {
         </Card>
 
         {/* Demo Accounts */}
-        <Card>
+        {/* <Card>
           <CardHeader>
             <CardTitle className="text-sm">Demo Accounts</CardTitle>
             <CardDescription className="text-xs">Click to use demo credentials</CardDescription>
@@ -158,7 +158,7 @@ const EngineerLoginPage = () => {
               </Button>
             ))}
           </CardContent>
-        </Card>
+        </Card> */}
 
         <div className="text-center">
           <Link to="/" className="text-sm text-muted-foreground hover:underline">

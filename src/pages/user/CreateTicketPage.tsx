@@ -92,10 +92,10 @@ const CreateTicketPage = () => {
     <Layout user={user}>
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center space-x-4">
-          <Button variant="ghost" onClick={() => navigate("/user/dashboard")}>
+          {/* <Button variant="ghost" onClick={() => navigate("/user/dashboard")}>
             <Home className="h-4 w-4 mr-2" />
             Dashboard
-          </Button>
+          </Button> */}
           <div>
             <h1 className="text-2xl font-bold">Create Support Ticket</h1>
             <p className="text-muted-foreground">Describe your issue and we'll help you resolve it</p>

@@ -125,10 +125,10 @@ const ManageUsers = () => {
       <div className="container mx-auto px-4 py-4">
         <div className="flex items-center justify-between">
           <div className="flex items-center space-x-4">
-            <Button variant="ghost" onClick={() => navigate("/admin/dashboard")}>
+            {/* <Button variant="ghost" onClick={() => navigate("/admin/dashboard")}>
               <Home className="h-4 w-4 mr-2" />
               Dashboard
-            </Button>
+            </Button> */}
             <div className="flex items-center space-x-2">
               <Users className="h-5 w-5 text-primary" />
               <h1 className="text-2xl font-bold">Manage Users</h1>
