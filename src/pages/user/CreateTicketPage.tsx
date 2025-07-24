@@ -8,6 +8,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Send, Home } from "lucide-react";
+import Layout from "@/components/layout/Layout";
 
 const CreateTicketPage = () => {
   const [user, setUser] = useState<any>(null);
@@ -36,6 +37,11 @@ const CreateTicketPage = () => {
     
     setUser(userData);
   }, [navigate]);
+
+  const handleInputChange = (e: React.ChangeEvent<HTMLInputElement | HTMLTextAreaElement>) => {
+    const { name, value } = e.target;
+    setFormData(prev => ({ ...prev, [name]: value }));
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -80,97 +86,111 @@ const CreateTicketPage = () => {
     }
   };
 
-  const handleChange = (field: string, value: string) => {
-    setFormData(prev => ({ ...prev, [field]: value }));
-  };
-
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-secondary/5">
-      {/* Header */}
-      <header className="border-b bg-background/80 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" onClick={() => navigate("/user/dashboard")}>
-              <Home className="h-4 w-4 mr-2" />
-              Dashboard
-            </Button>
-            <div>
-              <h1 className="text-xl font-bold">Create New Ticket</h1>
-              <p className="text-sm text-muted-foreground">Submit a new support request</p>
-            </div>
+    <Layout user={user}>
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex items-center space-x-4">
+          <Button variant="ghost" onClick={() => navigate("/user/dashboard")}>
+            <Home className="h-4 w-4 mr-2" />
+            Dashboard
+          </Button>
+          <div>
+            <h1 className="text-2xl font-bold">Create Support Ticket</h1>
+            <p className="text-muted-foreground">Describe your issue and we'll help you resolve it</p>
           </div>
         </div>
-      </header>
-
-      <main className="container mx-auto px-4 py-8 max-w-2xl">
-        <Card>
+        
+        <Card className="mt-6 max-w-2xl mx-auto">
           <CardHeader>
             <CardTitle>New Support Ticket</CardTitle>
-            <CardDescription>
-              Provide as much detail as possible to help us resolve your issue quickly
-            </CardDescription>
+            <CardDescription>Please provide as much detail as possible to help us assist you better</CardDescription>
           </CardHeader>
           <CardContent>
             <form onSubmit={handleSubmit} className="space-y-6">
-              <div className="space-y-2">
+              <div>
                 <Label htmlFor="title">Title *</Label>
                 <Input
                   id="title"
-                  placeholder="Brief description of your issue"
+                  name="title"
                   value={formData.title}
-                  onChange={(e) => handleChange("title", e.target.value)}
+                  onChange={handleInputChange}
+                  placeholder="Brief description of your issue"
                   required
                 />
               </div>
 
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label htmlFor="category">Category *</Label>
-                  <Select value={formData.category} onValueChange={(value) => handleChange("category", value)} required>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select category" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="technical">Technical Issue</SelectItem>
-                      <SelectItem value="account">Account & Billing</SelectItem>
-                      <SelectItem value="bug">Bug Report</SelectItem>
-                      <SelectItem value="feature">Feature Request</SelectItem>
-                      <SelectItem value="other">Other</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="urgency">Urgency *</Label>
-                  <Select value={formData.urgency} onValueChange={(value) => handleChange("urgency", value)} required>
-                    <SelectTrigger>
-                      <SelectValue placeholder="Select urgency" />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="low">Low</SelectItem>
-                      <SelectItem value="medium">Medium</SelectItem>
-                      <SelectItem value="high">High</SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
+              <div>
+                <Label htmlFor="category">Category *</Label>
+                <Select 
+                  name="category" 
+                  value={formData.category} 
+                  onValueChange={(value) => setFormData(prev => ({...prev, category: value}))}
+                  required
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="Select issue category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="hardware">Hardware Issues</SelectItem>
+                    <SelectItem value="software">Software Problems</SelectItem>
+                    <SelectItem value="network">Network/Connectivity</SelectItem>
+                    <SelectItem value="account">Account & Access</SelectItem>
+                    <SelectItem value="email">Email Issues</SelectItem>
+                    <SelectItem value="other">Other</SelectItem>
+                  </SelectContent>
+                </Select>
               </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="description">Description *</Label>
+              <div>
+                <Label htmlFor="urgency">Urgency Level *</Label>
+                <Select 
+                  name="urgency" 
+                  value={formData.urgency} 
+                  onValueChange={(value) => setFormData(prev => ({...prev, urgency: value}))}
+                  required
+                >
+                  <SelectTrigger>
+                    <SelectValue placeholder="How urgent is this issue?" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="low">Low - Can wait a few days</SelectItem>
+                    <SelectItem value="medium">Medium - Need help within 24 hours</SelectItem>
+                    <SelectItem value="high">High - Urgent, affecting work</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              <div>
+                <Label htmlFor="description">Detailed Description *</Label>
                 <Textarea
                   id="description"
-                  placeholder="Describe your issue in detail..."
+                  name="description"
                   value={formData.description}
-                  onChange={(e) => handleChange("description", e.target.value)}
+                  onChange={handleInputChange}
+                  placeholder="Please describe your issue in detail. Include any error messages, steps that led to the problem, and what you've already tried..."
                   rows={6}
                   required
                 />
               </div>
 
-              <div className="flex gap-4">
-                <Button
+              <div className="flex space-x-4">
+                <Button 
+                  type="submit" 
+                  disabled={isSubmitting}
+                  className="flex-1"
+                >
+                  {isSubmitting ? (
+                    "Creating..."
+                  ) : (
+                    <>
+                      <Send className="w-4 h-4 mr-2" />
+                      Create Ticket
+                    </>
+                  )}
+                </Button>
+                <Button 
                   type="button"
                   variant="outline"
                   onClick={() => navigate("/user/dashboard")}
@@ -178,20 +198,12 @@ const CreateTicketPage = () => {
                 >
                   Cancel
                 </Button>
-                <Button
-                  type="submit"
-                  disabled={isSubmitting}
-                  className="flex-1"
-                >
-                  <Send className="h-4 w-4 mr-2" />
-                  {isSubmitting ? "Creating..." : "Create Ticket"}
-                </Button>
               </div>
             </form>
           </CardContent>
         </Card>
-      </main>
-    </div>
+      </div>
+    </Layout>
   );
 };
 

@@ -7,6 +7,7 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, Ticket, UserCheck, Clock, CheckCircle, AlertCircle, Home } from "lucide-react";
+import Layout from "@/components/layout/Layout";
 
 const ManageTickets = () => {
   const [user, setUser] = useState<any>(null);
@@ -99,114 +100,130 @@ const ManageTickets = () => {
     });
   };
 
-  const getStatusBadge = (status: string) => {
-    const statusConfig = {
-      pending: { variant: "secondary" as const, icon: Clock, color: "text-yellow-600" },
-      assigned: { variant: "default" as const, icon: UserCheck, color: "text-blue-600" },
-      "in-progress": { variant: "default" as const, icon: AlertCircle, color: "text-blue-600" },
-      resolved: { variant: "outline" as const, icon: CheckCircle, color: "text-green-600" },
-      closed: { variant: "outline" as const, icon: CheckCircle, color: "text-green-600" }
-    };
-    
-    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
-    const Icon = config.icon;
-    
-    return (
-      <Badge variant={config.variant} className="flex items-center gap-1">
-        <Icon className="h-3 w-3" />
-        {status.charAt(0).toUpperCase() + status.slice(1)}
-      </Badge>
-    );
-  };
+  const handleReassignTicket = (ticketId: string) => {
+    // Reset assignment
+    const updatedTickets = tickets.map(ticket => {
+      if (ticket.id === ticketId) {
+        return {
+          ...ticket,
+          assignedTo: null,
+          assignedEngineer: null,
+          status: "pending"
+        };
+      }
+      return ticket;
+    });
 
-  const getUrgencyColor = (urgency: string) => {
-    switch (urgency?.toLowerCase()) {
-      case "high": return "text-red-600";
-      case "medium": return "text-yellow-600";
-      case "low": return "text-green-600";
-      default: return "text-gray-600";
+    setTickets(updatedTickets);
+
+    // Update in localStorage
+    const ticket = tickets.find(t => t.id === ticketId);
+    if (ticket) {
+      const allUsers = JSON.parse(localStorage.getItem("allUsers") || "[]");
+      const ticketOwner = allUsers.find((u: any) => u.email === ticket.userEmail);
+      
+      if (ticketOwner) {
+        const userTickets = JSON.parse(localStorage.getItem(`tickets_${ticketOwner.id}`) || "[]");
+        const updatedUserTickets = userTickets.map((t: any) => {
+          if (t.id === ticketId) {
+            return { ...t, assignedTo: null, assignedEngineer: null, status: "pending" };
+          }
+          return t;
+        });
+        localStorage.setItem(`tickets_${ticketOwner.id}`, JSON.stringify(updatedUserTickets));
+      }
     }
+
+    toast({
+      title: "Ticket unassigned",
+      description: "Ticket is now available for reassignment"
+    });
   };
 
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-secondary/5">
-      <header className="border-b bg-background/80 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center space-x-4">
-            <Button variant="ghost" onClick={() => navigate("/admin/dashboard")}>
-              <Home className="h-4 w-4 mr-2" />
-              Dashboard
-            </Button>
-            <div className="flex items-center space-x-2">
-              <Ticket className="h-6 w-6 text-primary" />
-              <div>
-                <h1 className="text-xl font-bold">Assign Tickets</h1>
-                <p className="text-sm text-muted-foreground">{tickets.length} tickets total</p>
-              </div>
-            </div>
+    <Layout user={user}>
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex items-center space-x-4">
+          <Button variant="ghost" onClick={() => navigate("/admin/dashboard")}>
+            <Home className="h-4 w-4 mr-2" />
+            Dashboard
+          </Button>
+          <div className="flex items-center space-x-2">
+            <Ticket className="h-5 w-5 text-primary" />
+            <h1 className="text-2xl font-bold">Assign Tickets</h1>
           </div>
         </div>
-      </header>
-
-      <main className="container mx-auto px-4 py-8">
-        <Card>
+        
+        <Card className="mt-6">
           <CardHeader>
-            <CardTitle>All Tickets</CardTitle>
-            <CardDescription>Assign tickets to engineers and manage their status</CardDescription>
+            <CardTitle>Ticket Assignment</CardTitle>
+            <CardDescription>Assign pending tickets to engineers</CardDescription>
           </CardHeader>
           <CardContent>
             {tickets.length === 0 ? (
-              <div className="text-center py-8">
-                <Ticket className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No tickets found</h3>
-                <p className="text-muted-foreground">No support tickets have been created yet</p>
-              </div>
+              <p className="text-center text-muted-foreground py-8">No tickets available</p>
             ) : (
               <Table>
                 <TableHeader>
                   <TableRow>
                     <TableHead>Ticket ID</TableHead>
                     <TableHead>Title</TableHead>
-                    <TableHead>User</TableHead>
                     <TableHead>Category</TableHead>
                     <TableHead>Urgency</TableHead>
                     <TableHead>Status</TableHead>
-                    <TableHead>Assigned To</TableHead>
-                    <TableHead>Actions</TableHead>
+                    <TableHead>Assigned Engineer</TableHead>
+                    <TableHead>Action</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {tickets.map((ticket) => (
                     <TableRow key={ticket.id}>
-                      <TableCell className="font-mono text-sm">#{ticket.id.slice(0, 8)}</TableCell>
+                      <TableCell className="font-mono text-sm">{ticket.id}</TableCell>
                       <TableCell className="font-medium">{ticket.title}</TableCell>
                       <TableCell>
-                        <div>
-                          <div className="font-medium">{ticket.userName}</div>
-                          <div className="text-sm text-muted-foreground">{ticket.userEmail}</div>
+                        <Badge variant="outline">{ticket.category}</Badge>
+                      </TableCell>
+                      <TableCell>
+                        <Badge 
+                          variant={
+                            ticket.urgency === "high" ? "destructive" : 
+                            ticket.urgency === "medium" ? "default" : "secondary"
+                          }
+                        >
+                          {ticket.urgency}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-1">
+                          {ticket.status === "pending" && <Clock className="h-4 w-4 text-yellow-500" />}
+                          {ticket.status === "assigned" && <UserCheck className="h-4 w-4 text-blue-500" />}
+                          {ticket.status === "resolved" && <CheckCircle className="h-4 w-4 text-green-500" />}
+                          <Badge 
+                            variant={
+                              ticket.status === "pending" ? "secondary" :
+                              ticket.status === "assigned" ? "default" : "outline"
+                            }
+                          >
+                            {ticket.status}
+                          </Badge>
                         </div>
                       </TableCell>
-                      <TableCell>{ticket.category}</TableCell>
                       <TableCell>
-                        <span className={`font-medium ${getUrgencyColor(ticket.urgency)}`}>
-                          {ticket.urgency}
-                        </span>
-                      </TableCell>
-                      <TableCell>{getStatusBadge(ticket.status)}</TableCell>
-                      <TableCell>
-                        {ticket.assignedEngineer ? (
-                          <Badge variant="secondary">{ticket.assignedEngineer}</Badge>
+                        {ticket.assignedTo ? (
+                          <span className="text-sm">{engineers.find(e => e.id === ticket.assignedTo)?.name || "Unknown"}</span>
                         ) : (
-                          <span className="text-muted-foreground">Unassigned</span>
+                          <span className="text-sm text-muted-foreground">Not assigned</span>
                         )}
                       </TableCell>
                       <TableCell>
-                        {!ticket.assignedTo && (
-                          <Select onValueChange={(value) => handleAssignTicket(ticket.id, value)}>
-                            <SelectTrigger className="w-32">
-                              <SelectValue placeholder="Assign" />
+                        {ticket.status === "pending" && (
+                          <Select 
+                            onValueChange={(engineerId) => handleAssignTicket(ticket.id, engineerId)}
+                          >
+                            <SelectTrigger className="w-40">
+                              <SelectValue placeholder="Assign to..." />
                             </SelectTrigger>
                             <SelectContent>
                               {engineers.map((engineer) => (
@@ -217,6 +234,15 @@ const ManageTickets = () => {
                             </SelectContent>
                           </Select>
                         )}
+                        {ticket.status === "assigned" && (
+                          <Button 
+                            size="sm" 
+                            variant="outline"
+                            onClick={() => handleReassignTicket(ticket.id)}
+                          >
+                            Reassign
+                          </Button>
+                        )}
                       </TableCell>
                     </TableRow>
                   ))}
@@ -225,8 +251,8 @@ const ManageTickets = () => {
             )}
           </CardContent>
         </Card>
-      </main>
-    </div>
+      </div>
+    </Layout>
   );
 };
 

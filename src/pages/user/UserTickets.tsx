@@ -8,6 +8,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useToast } from "@/hooks/use-toast";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Ticket, ArrowLeft, Search, Filter, Clock, CheckCircle, AlertCircle, Plus, Home } from "lucide-react";
+import Layout from "@/components/layout/Layout";
 
 const UserTickets = () => {
   const [user, setUser] = useState<any>(null);
@@ -57,120 +58,71 @@ const UserTickets = () => {
     setFilteredTickets(filtered);
   }, [tickets, searchTerm, statusFilter]);
 
-  const getStatusBadge = (status: string) => {
-    const statusConfig = {
-      pending: { variant: "secondary" as const, icon: Clock, color: "text-yellow-600" },
-      assigned: { variant: "default" as const, icon: AlertCircle, color: "text-blue-600" },
-      "in-progress": { variant: "default" as const, icon: AlertCircle, color: "text-blue-600" },
-      resolved: { variant: "outline" as const, icon: CheckCircle, color: "text-green-600" },
-      closed: { variant: "outline" as const, icon: CheckCircle, color: "text-green-600" }
-    };
-    
-    const config = statusConfig[status as keyof typeof statusConfig] || statusConfig.pending;
-    const Icon = config.icon;
-    
-    return (
-      <Badge variant={config.variant} className="flex items-center gap-1">
-        <Icon className="h-3 w-3" />
-        {status.charAt(0).toUpperCase() + status.slice(1)}
-      </Badge>
-    );
-  };
-
-  const getUrgencyColor = (urgency: string) => {
-    switch (urgency.toLowerCase()) {
-      case "high": return "text-red-600";
-      case "medium": return "text-yellow-600";
-      case "low": return "text-green-600";
-      default: return "text-gray-600";
-    }
-  };
-
   if (!user) return null;
 
   return (
-    <div className="min-h-screen bg-gradient-to-br from-primary/10 via-background to-secondary/5">
-      {/* Header */}
-      <header className="border-b bg-background/80 backdrop-blur-sm">
-        <div className="container mx-auto px-4 py-4">
-          <div className="flex items-center justify-between">
-            <div className="flex items-center space-x-4">
-              <Button variant="ghost" onClick={() => navigate("/user/dashboard")}>
-                <Home className="h-4 w-4 mr-2" />
-                Dashboard
-              </Button>
-              <div className="flex items-center space-x-2">
-                <Ticket className="h-6 w-6 text-primary" />
-                <div>
-                  <h1 className="text-xl font-bold">My Tickets</h1>
-                  <p className="text-sm text-muted-foreground">{filteredTickets.length} tickets found</p>
-                </div>
-              </div>
-            </div>
-            <Button onClick={() => navigate("/user/create-ticket")}>
-              <Plus className="h-4 w-4 mr-2" />
-              New Ticket
+    <Layout user={user}>
+      <div className="container mx-auto px-4 py-4">
+        <div className="flex items-center justify-between">
+          <div className="flex items-center space-x-4">
+            <Button variant="ghost" onClick={() => navigate("/user/dashboard")}>
+              <Home className="h-4 w-4 mr-2" />
+              Dashboard
             </Button>
+            <div className="flex items-center space-x-2">
+              <Ticket className="h-5 w-5 text-primary" />
+              <h1 className="text-2xl font-bold">My Support Tickets</h1>
+            </div>
           </div>
+          
+          <Button onClick={() => navigate("/user/create-ticket")}>
+            <Plus className="h-4 w-4 mr-2" />
+            Create New Ticket
+          </Button>
         </div>
-      </header>
 
-      <main className="container mx-auto px-4 py-8">
-        {/* Filters */}
-        <Card className="mb-6">
+        <Card className="mt-6">
           <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Filter className="h-5 w-5" />
-              Filter Tickets
-            </CardTitle>
+            <CardTitle>Your Tickets</CardTitle>
+            <CardDescription>Track and manage your support requests</CardDescription>
           </CardHeader>
           <CardContent>
-            <div className="flex flex-col md:flex-row gap-4">
-              <div className="flex-1">
-                <div className="relative">
-                  <Search className="absolute left-3 top-3 h-4 w-4 text-muted-foreground" />
-                  <Input
-                    placeholder="Search tickets..."
-                    value={searchTerm}
-                    onChange={(e) => setSearchTerm(e.target.value)}
-                    className="pl-9"
-                  />
-                </div>
+            <div className="flex flex-col sm:flex-row gap-4 mb-6">
+              <div className="flex items-center space-x-2 flex-1">
+                <Search className="h-4 w-4 text-muted-foreground" />
+                <Input
+                  placeholder="Search tickets..."
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                  className="flex-1"
+                />
               </div>
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-full md:w-48">
+                <SelectTrigger className="w-full sm:w-48">
+                  <Filter className="h-4 w-4 mr-2" />
                   <SelectValue placeholder="Filter by status" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all">All Statuses</SelectItem>
+                  <SelectItem value="all">All Tickets</SelectItem>
                   <SelectItem value="pending">Pending</SelectItem>
                   <SelectItem value="assigned">Assigned</SelectItem>
-                  <SelectItem value="in-progress">In Progress</SelectItem>
                   <SelectItem value="resolved">Resolved</SelectItem>
-                  <SelectItem value="closed">Closed</SelectItem>
                 </SelectContent>
               </Select>
             </div>
-          </CardContent>
-        </Card>
 
-        {/* Tickets Table */}
-        <Card>
-          <CardHeader>
-            <CardTitle>Tickets</CardTitle>
-            <CardDescription>All your support tickets</CardDescription>
-          </CardHeader>
-          <CardContent>
             {filteredTickets.length === 0 ? (
-              <div className="text-center py-8">
+              <div className="text-center py-12">
                 <Ticket className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-                <h3 className="text-lg font-semibold mb-2">No tickets found</h3>
-                <p className="text-muted-foreground mb-4">
-                  {tickets.length === 0 ? "Create your first support ticket" : "Try adjusting your filters"}
+                <p className="text-lg text-muted-foreground mb-2">No tickets found</p>
+                <p className="text-sm text-muted-foreground mb-4">
+                  {tickets.length === 0 
+                    ? "You haven't created any support tickets yet." 
+                    : "No tickets match your current search or filter."}
                 </p>
                 <Button onClick={() => navigate("/user/create-ticket")}>
                   <Plus className="h-4 w-4 mr-2" />
-                  Create Ticket
+                  Create Your First Ticket
                 </Button>
               </div>
             ) : (
@@ -187,17 +139,38 @@ const UserTickets = () => {
                 </TableHeader>
                 <TableBody>
                   {filteredTickets.map((ticket) => (
-                    <TableRow key={ticket.id} className="cursor-pointer hover:bg-muted/50">
-                      <TableCell className="font-mono text-sm">#{ticket.id.slice(0, 8)}</TableCell>
+                    <TableRow key={ticket.id}>
+                      <TableCell className="font-mono text-sm">{ticket.id}</TableCell>
                       <TableCell className="font-medium">{ticket.title}</TableCell>
-                      <TableCell>{ticket.category}</TableCell>
                       <TableCell>
-                        <span className={`font-medium ${getUrgencyColor(ticket.urgency)}`}>
-                          {ticket.urgency}
-                        </span>
+                        <Badge variant="outline">{ticket.category}</Badge>
                       </TableCell>
-                      <TableCell>{getStatusBadge(ticket.status)}</TableCell>
-                      <TableCell className="text-muted-foreground">
+                      <TableCell>
+                        <Badge 
+                          variant={
+                            ticket.urgency === "high" ? "destructive" : 
+                            ticket.urgency === "medium" ? "default" : "secondary"
+                          }
+                        >
+                          {ticket.urgency}
+                        </Badge>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center space-x-1">
+                          {ticket.status === "pending" && <Clock className="h-4 w-4 text-yellow-500" />}
+                          {ticket.status === "assigned" && <AlertCircle className="h-4 w-4 text-blue-500" />}
+                          {ticket.status === "resolved" && <CheckCircle className="h-4 w-4 text-green-500" />}
+                          <Badge 
+                            variant={
+                              ticket.status === "pending" ? "secondary" :
+                              ticket.status === "assigned" ? "default" : "outline"
+                            }
+                          >
+                            {ticket.status}
+                          </Badge>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-sm text-muted-foreground">
                         {new Date(ticket.createdAt).toLocaleDateString()}
                       </TableCell>
                     </TableRow>
@@ -207,8 +180,8 @@ const UserTickets = () => {
             )}
           </CardContent>
         </Card>
-      </main>
-    </div>
+      </div>
+    </Layout>
   );
 };
 
