@@ -31,7 +31,7 @@ const EngineerDashboard = () => {
   }, [navigate]);
 
   const loadAssignedTickets = (engineerId: string) => {
-    // Load all tickets assigned to this engineer(using local storage)
+    // Load all tickets assigned to this engineer
     const allUsers = JSON.parse(localStorage.getItem("allUsers") || "[]");
     const assignedTickets: any[] = [];
     
@@ -109,7 +109,7 @@ const EngineerDashboard = () => {
     <Layout user={user}>
       <div className="container mx-auto px-4 py-6 space-y-6">
         {/* Stats Cards */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 mb-6">
           <Card>
             <CardHeader className="pb-3">
               <CardTitle className="text-base font-medium">Total Assigned</CardTitle>

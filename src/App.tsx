@@ -14,6 +14,7 @@ import UserDashboard from "./pages/user/UserDashboard";
 import UserTickets from "./pages/user/UserTickets";
 import CreateTicketPage from "./pages/user/CreateTicketPage";
 import EngineerDashboard from "./pages/engineer/EngineerDashboard";
+import EngineerTickets from "./pages/engineer/EngineerTickets";
 import AdminDashboard from "./pages/admin/AdminDashboard";
 import ManageUsers from "./pages/admin/ManageUsers";
 import ManageTickets from "./pages/admin/ManageTickets";
@@ -44,6 +45,7 @@ const App = () => (
           
           {/* Engineer Routes */}
           <Route path="/engineer/dashboard" element={<EngineerDashboard />} />
+          <Route path="/engineer/tickets" element={<EngineerTickets />} />
           
           {/* Admin Routes */}
           <Route path="/admin/dashboard" element={<AdminDashboard />} />
