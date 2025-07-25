@@ -31,7 +31,7 @@ const EngineerDashboard = () => {
   }, [navigate]);
 
   const loadAssignedTickets = (engineerId: string) => {
-    // Load all tickets assigned to this engineer
+    // Load all tickets assigned to this engineer(using local storage)
     const allUsers = JSON.parse(localStorage.getItem("allUsers") || "[]");
     const assignedTickets: any[] = [];
     

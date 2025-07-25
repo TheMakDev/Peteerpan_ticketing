@@ -22,8 +22,8 @@ const AdminSignupPage = () => {
   const navigate = useNavigate();
   const { toast } = useToast();
 
-  // Admin verification code (in a real app, this would be generated and sent)
-  const ADMIN_VERIFICATION_CODE = "ADMIN2024";
+  // Admin verification code 
+  const ADMIN_VERIFICATION_CODE = "ADMIN2025";
 
   const handleVerificationSubmit = (e: React.FormEvent) => {
     e.preventDefault();
@@ -166,9 +166,9 @@ const AdminSignupPage = () => {
                       required
                     />
                   </div>
-                  <p className="text-xs text-muted-foreground">
+                  {/* <p className="text-xs text-muted-foreground">
                     Demo code: <code className="bg-muted px-1 rounded">ADMIN2024</code>
-                  </p>
+                  </p> */}
                 </div>
 
                 <Button type="submit" className="w-full">

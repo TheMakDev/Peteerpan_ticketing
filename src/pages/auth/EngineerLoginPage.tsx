@@ -138,27 +138,7 @@ const EngineerLoginPage = () => {
           </CardContent>
         </Card>
 
-        {/* Demo Accounts */}
-        {/* <Card>
-          <CardHeader>
-            <CardTitle className="text-sm">Demo Accounts</CardTitle>
-            <CardDescription className="text-xs">Click to use demo credentials</CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-2">
-            {demoAccounts.map((account) => (
-              <Button
-                key={account.id}
-                variant="outline"
-                size="sm"
-                className="w-full justify-start"
-                onClick={() => handleDemoLogin(account)}
-              >
-                <Wrench className="h-3 w-3 mr-2" />
-                {account.name} - {account.email}
-              </Button>
-            ))}
-          </CardContent>
-        </Card> */}
+        
 
         <div className="text-center">
           <Link to="/" className="text-sm text-muted-foreground hover:underline">

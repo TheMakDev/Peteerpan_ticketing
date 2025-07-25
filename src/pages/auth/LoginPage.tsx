@@ -143,23 +143,23 @@ const LoginPage = () => {
                 {loading ? "Signing in..." : "Sign In"}
               </Button>
               
-              <Button 
+              {/* <Button 
                 type="button" 
                 variant="outline" 
                 className="w-full" 
                 onClick={fillDemo}
               >
                 Use Demo Account
-              </Button>
+              </Button> */}
             </form>
             
-            <div className="mt-6 text-center">
+            {/* <div className="mt-6 text-center">
               <p className="text-sm text-muted-foreground mb-2">Demo Credentials:</p>
               <div className="text-xs bg-muted p-2 rounded">
                 <p>{config.demo.email}</p>
                 <p>{config.demo.password}</p>
               </div>
-            </div>
+            </div> */}
           </CardContent>
         </Card>
         
